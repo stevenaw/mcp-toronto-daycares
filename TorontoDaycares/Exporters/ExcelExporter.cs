@@ -1,4 +1,5 @@
-﻿using ClosedXML.Excel;
+﻿using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 
 namespace TorontoDaycares.Exporters
 {
@@ -22,37 +23,61 @@ namespace TorontoDaycares.Exporters
                 throw new InvalidOperationException("No programs to export.");
             }
 
-            using var workbook = new XLWorkbook();
+            using IWorkbook workbook = new XSSFWorkbook();
+            var creationHelper = workbook.GetCreationHelper();
+            var headerStyle = workbook.CreateCellStyle();
+            var headerFont = workbook.CreateFont();
+            headerFont.IsBold = true;
+            headerStyle.SetFont(headerFont);
 
             foreach (var programType in items)
             {
-                var worksheet = workbook.Worksheets.Add(programType.Key.ToString());
+                var worksheet = workbook.CreateSheet(programType.Key.ToString());
+                var headerRow = worksheet.CreateRow(0);
 
-                worksheet.Row(1).Style.Font.Bold = true;
-                worksheet.Cell(1, 1).Value = "Name";
-                worksheet.Cell(1, 2).Value = "Rating";
-                worksheet.Cell(1, 3).Value = "Capacity";
-                worksheet.Cell(1, 4).Value = "Vacancy";
-                worksheet.Cell(1, 5).Value = "Address";
-                worksheet.Cell(1, 6).Value = "Url";
+                CreateTextCell(headerRow, 0, "Name", headerStyle);
+                CreateTextCell(headerRow, 1, "Rating", headerStyle);
+                CreateTextCell(headerRow, 2, "Capacity", headerStyle);
+                CreateTextCell(headerRow, 3, "Vacancy", headerStyle);
+                CreateTextCell(headerRow, 4, "Address", headerStyle);
+                CreateTextCell(headerRow, 5, "Url", headerStyle);
 
-                var row = 2;
+                var rowIndex = 1;
                 foreach (var item in programType.Value)
                 {
-                    worksheet.Cell(row, 1).Value = item.Daycare.Name;
-                    worksheet.Cell(row, 2).Value = item.Program.Rating.Value;
-                    worksheet.Cell(row, 3).Value = item.Program.Capacity;
+                    var row = worksheet.CreateRow(rowIndex);
+                    row.CreateCell(0).SetCellValue(item.Daycare.Name);
+                    row.CreateCell(1).SetCellValue(item.Program.Rating.Value);
+                    row.CreateCell(2).SetCellValue(item.Program.Capacity);
                     if (item.Program.Vacancy.HasValue)
-                        worksheet.Cell(row, 4).Value = item.Program.Vacancy.Value;
-                    worksheet.Cell(row, 5).Value = item.Daycare.Address;
-                    worksheet.Cell(row, 6).SetHyperlink(new XLHyperlink(item.Daycare.Uri));
-                    row++;
+                    {
+                        row.CreateCell(3).SetCellValue(item.Program.Vacancy.Value);
+                    }
+                    row.CreateCell(4).SetCellValue(item.Daycare.Address);
+
+                    var hyperlinkCell = row.CreateCell(5);
+                    hyperlinkCell.SetCellValue(item.Daycare.Uri.ToString());
+                    var hyperlink = creationHelper.CreateHyperlink(HyperlinkType.Url);
+                    hyperlink.Address = item.Daycare.Uri.ToString();
+                    hyperlinkCell.Hyperlink = hyperlink;
+                    rowIndex++;
                 }
 
-                worksheet.Columns().AdjustToContents();
+                for (var columnIndex = 0; columnIndex <= 5; columnIndex++)
+                {
+                    worksheet.AutoSizeColumn(columnIndex);
+                }
             }
 
-            await Task.Run(() => workbook.SaveAs(FileName));
+            await using var stream = File.Create(FileName);
+            workbook.Write(stream);
+        }
+
+        private static void CreateTextCell(IRow row, int columnIndex, string value, ICellStyle style)
+        {
+            var cell = row.CreateCell(columnIndex);
+            cell.SetCellValue(value);
+            cell.CellStyle = style;
         }
     }
 }

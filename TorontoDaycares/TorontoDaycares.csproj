@@ -2,9 +2,10 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" />
-    <PackageReference Include="ClosedXML" />
+    <PackageReference Include="NPOI" />
     <PackageReference Include="HtmlAgilityPack" />
     <PackageReference Include="HtmlAgilityPack.CssSelectors.NetCore" />
+    <PackageReference Include="SkiaSharp" />
   </ItemGroup>
 
 </Project>
