@@ -866,15 +866,9 @@ namespace TorontoDaycares.Tests.Exporters
             // Assert
             Assert.That(exporter, Is.Not.Null);
         }
-
-        //private static ICell? GetCell(ISheet sheet, int rowIndex, int cellIndex)
-        //    => sheet.GetRow(rowIndex)?.GetCell(cellIndex);
-
-        //private static string GetCellStringValue(ISheet sheet, int rowIndex, int cellIndex)
-        //    => GetCell(sheet, rowIndex, cellIndex)?.ToString() ?? string.Empty;
     }
 
-    file static class NpoiExtensions
+    static file class NpoiExtensions
     {
         extension(ISheet sheet)
         {

@@ -47,7 +47,7 @@ namespace TorontoDaycares.Exporters
                 {
                     var row = worksheet.CreateRow(rowIndex);
                     row.CreateCell(0).SetCellValue(item.Daycare.Name);
-                    row.CreateCell(1).SetCellValue(item.Program.Rating.Value);
+                    row.CreateCell(1).SetCellValue(item.Program.Rating!.Value);
                     row.CreateCell(2).SetCellValue(item.Program.Capacity);
                     if (item.Program.Vacancy.HasValue)
                     {
