@@ -261,7 +261,7 @@ static string? ExtractJsonFromContent(IEnumerable<object> contentBlocks)
             {
                 // Heuristic: if it looks like JSON, return
                 var trimmed = s.TrimStart();
-                if (trimmed.StartsWith("[") || trimmed.StartsWith("{"))
+                if (trimmed.StartsWith('[') || trimmed.StartsWith('{'))
                     return s;
                 // Otherwise return serialized form
                 return JsonSerializer.Serialize(s);
@@ -307,7 +307,7 @@ static double GreatCircleDistance(Coordinates a, Coordinates b)
 {
     const double EarthRadius = 6371; // km
 
-    double DegreesToRadians(double degrees) => degrees * Math.PI / 180.0;
+    static double DegreesToRadians(double degrees) => degrees * Math.PI / 180.0;
 
     var lat1 = DegreesToRadians(a.Latitute);
     var lon1 = DegreesToRadians(a.Longitude);

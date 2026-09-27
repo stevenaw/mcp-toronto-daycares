@@ -12,7 +12,7 @@ namespace TorontoDaycares.Tests.Exporters
         /// Expected to throw NullReferenceException when accessing response.TopPrograms.
         /// </summary>
         [Test]
-        public void ExportAsync_NullResponse_ThrowsNullReferenceException()
+        public async Task ExportAsync_NullResponse_ThrowsNullReferenceException()
         {
             // Arrange
             using var tempDir = new TempDirectory();
@@ -20,7 +20,7 @@ namespace TorontoDaycares.Tests.Exporters
             var exporter = new ExcelExporter(filePath);
 
             // Act & Assert
-            Assert.ThrowsAsync<NullReferenceException>(async () =>
+            await Assert.ThrowsAsync<NullReferenceException>(async () =>
                 await exporter.ExportAsync(null!));
         }
 
@@ -285,7 +285,7 @@ namespace TorontoDaycares.Tests.Exporters
         /// Expected: InvalidOperationException when accessing Rating.Value.
         /// </summary>
         [Test]
-        public void ExportAsync_NullRating_ThrowsInvalidOperationException()
+        public async Task ExportAsync_NullRating_ThrowsInvalidOperationException()
         {
             // Arrange
             using var tempDir = new TempDirectory();
@@ -317,7 +317,7 @@ namespace TorontoDaycares.Tests.Exporters
             };
 
             // Act & Assert
-            Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            await Assert.ThrowsAsync<InvalidOperationException>(async () =>
                 await exporter.ExportAsync(response));
         }
 
@@ -769,7 +769,7 @@ namespace TorontoDaycares.Tests.Exporters
         /// Expected: DirectoryNotFoundException or similar exception.
         /// </summary>
         [Test]
-        public void ExportAsync_InvalidFilePath_ThrowsException()
+        public async Task ExportAsync_InvalidFilePath_ThrowsException()
         {
             // Arrange
             string filePath = Path.Combine("C:\\NonExistentDirectory123456789", "output.xlsx");
@@ -800,7 +800,7 @@ namespace TorontoDaycares.Tests.Exporters
             };
 
             // Act & Assert
-            Assert.ThrowsAsync<DirectoryNotFoundException>(async () =>
+            await Assert.ThrowsAsync<DirectoryNotFoundException>(async () =>
                 await exporter.ExportAsync(response));
         }
 
