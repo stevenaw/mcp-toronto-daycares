@@ -42,10 +42,13 @@
             Assert.That(wards1, Is.SameAs(wards2));
         }
 
-        [Test]
+        [Test] // TODO: allow mock handler to return static csv data for testing
         public async Task GetWardsAsync_FetchesWhenNotCached()
         {
             var handler = new NullHttpClientHandler();
+            var realCacheFileData = Path.Join(Directory.GetCurrentDirectory(), "Data", "City Wards Data - 4326.csv");
+            handler.SetResponseContent(await File.ReadAllTextAsync(realCacheFileData));
+
             var mockClient = new HttpClient(handler);
 
             var cacheFileLocation = new TempFile("csv");

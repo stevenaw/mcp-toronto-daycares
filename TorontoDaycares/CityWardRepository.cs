@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-using CsvHelper;
-using CsvHelper.Configuration;
+﻿using CsvHelper;
 using TorontoDaycares.Models;
 
 namespace TorontoDaycares
@@ -20,15 +18,6 @@ namespace TorontoDaycares
             CacheFileLocation = Path.Join(Directory.GetCurrentDirectory(), FileResources.DataDirectory, "City Wards Data.csv");
         }
 
-        private class CityWardClassMap : ClassMap<CityWard>
-        {
-            public CityWardClassMap()
-            {
-                Map(m => m.Number).Name("AREA_LONG_CODE");
-                Map(m => m.Name).Name("AREA_NAME");
-            }
-        }
-
         private async Task InitializeCache()
         {
             if (WardsByName is { Count: 0 })
@@ -40,11 +29,7 @@ namespace TorontoDaycares
                     await result.CopyToAsync(newFile);
                 }
 
-                await using var file = File.OpenRead(CacheFileLocation);
-                using var reader = new StreamReader(file);
-
-                var csvParser = new CsvReader(reader, CultureInfo.InvariantCulture);
-                csvParser.Context.RegisterClassMap<CityWardClassMap>();
+                await using var csvParser = CsvReader.FromFile(CacheFileLocation);
 
                 var wards = new Dictionary<string, CityWard>(25);
                 var allWards = new CityWard[25];
